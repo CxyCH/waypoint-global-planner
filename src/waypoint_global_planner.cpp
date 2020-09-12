@@ -84,6 +84,7 @@ void WaypointGlobalPlanner::waypointCallback(const geometry_msgs::PointStampedCo
   waypoints_.back().pose.orientation.w = 1.0;
 
   // create and publish markers
+  ROS_INFO("create and publish markers");
   createAndPublishMarkersFromPath(waypoints_);
 
   if (waypoints_.size() < 2)
@@ -98,7 +99,8 @@ void WaypointGlobalPlanner::waypointCallback(const geometry_msgs::PointStampedCo
 
   // calculate distance between latest two waypoints and check if it surpasses the threshold epsilon
   double dist = hypot(p1->position.x - p2->position.x, p1->position.y - p2->position.y);
-  if (dist < epsilon_)
+  ROS_INFO("Path dist: %f, epsilon_: %f", dist, epsilon_);
+  if (dist > epsilon_)
   {
     p2->orientation = p1->orientation;
     path_.header = waypoint->header;
@@ -178,6 +180,10 @@ void WaypointGlobalPlanner::createAndPublishMarkersFromPath(const std::vector<ge
   {
     marker.id = i;
     marker.pose.position = path[i].pose.position;
+    marker.pose.orientation.x = 0;
+    marker.pose.orientation.y = 0;
+    marker.pose.orientation.z = 0;
+    marker.pose.orientation.w = 1;
     markers.markers.push_back(marker);
   }
 
